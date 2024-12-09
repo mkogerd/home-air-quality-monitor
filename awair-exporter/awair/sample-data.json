@@ -1,0 +1,17 @@
+{
+  "timestamp": "2024-12-05T07:38:08.929Z",
+  "score": 89,
+  "dew_point": 11.58,
+  "temp": 20.03,
+  "humid": 58.28,
+  "abs_humid": 10.06,
+  "co2": 752,
+  "co2_est": 1255,
+  "co2_est_baseline": 36294,
+  "voc": 157,
+  "voc_baseline": 36350,
+  "voc_h2_raw": 25,
+  "voc_ethanol_raw": 35,
+  "pm25": 6,
+  "pm10_est": 7
+}
