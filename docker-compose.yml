@@ -1,0 +1,56 @@
+version: '3.7'
+
+services:
+  # Prometheus container
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"  # Expose Prometheus on host port 9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Load custom Prometheus config
+      - prometheus_data:/prometheus  # Persist prometheus data 
+    networks:
+      - monitoring
+    restart: always
+
+  # Grafana container
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"  # Expose Grafana on host port 3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # Set Grafana admin password (default: admin)
+    volumes:
+      - grafana_data:/var/lib/grafana  # Persist Grafana data
+      - ./grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml  # Add config to read provisioned dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards # Mount pre-defined dashboards
+    networks:
+      - monitoring
+    restart: always
+    depends_on:
+      - prometheus  # Ensure Prometheus is up before Grafana
+
+  # Go exporter container
+  awair-exporter:
+    build: ./awair-exporter
+    container_name: awair-exporter
+    environment:
+      AWAIR_HOST: ${AWAIR_HOST}
+    ports:
+      - "8080:8080"  # Expose the exporter on host port 8080
+    # network_mode: host
+    networks:
+      - monitoring
+    restart: always
+
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  grafana_data:
+    driver: local
+  prometheus_data:
+    driver: local
